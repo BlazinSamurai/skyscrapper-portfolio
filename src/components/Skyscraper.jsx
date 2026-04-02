@@ -7,73 +7,82 @@ import gsap from "gsap";
 
 import React, { useLayoutEffect, useRef } from "react";
 import { useGLTF, useScroll } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 
 export const FLOOR_HEIGHT = 2.3;
-export const NB_FLOORS = 3;
+export const FLOORS = 3;
 
 export function Skyscraper(props) {
   const { nodes, materials } = useGLTF("./models/skyscraper.glb");
   const ref = useRef();
-  const tl = useRef();
 
-  const floor2 = useRef();
-  const floor3 = useRef();
+  // Access the viewport (visible units at z=0 by default)
+  const { viewport } = useThree();
 
-  const scroll = useScroll();
+  // Example 1
+  // https://www.google.com/search?q=how+to+add+scroll+animation+to+a+3d+object+r3f&num=10&sca_esv=c6b7077b8ab86951&udm=7&biw=1440&bih=731&sxsrf=ANbL-n4pQTeUd2ma2pFCh88HOQEG0k__Mg%3A1775117610636&ei=KiXOaZzKJvbIkPIP95SQkQg&ved=0ahUKEwich_e03M6TAxV2JEQIHXcKJIIQ4dUDCBE&uact=5&oq=how+to+add+scroll+animation+to+a+3d+object+r3f&gs_lp=EhZnd3Mtd2l6LW1vZGVsZXNzLXZpZGVvIi5ob3cgdG8gYWRkIHNjcm9sbCBhbmltYXRpb24gdG8gYSAzZCBvYmplY3QgcjNmMgUQIRigATIFECEYoAEyBRAhGKABMgUQIRigATIFECEYoAFIjRpQxwZYghRwAXgBkAEAmAFZoAHJAqoBATS4AQPIAQD4AQGYAgWgAtwCwgIKEAAYsAMY1gQYR8ICBRAhGKsCwgIFECEYnwWYAwCIBgGQBgiSBwE1oAfvHbIHATS4B9cCwgcFMC40LjHIBwqACAA&sclient=gws-wiz-modeless-video#fpstate=ive&vld=cid:9a23f270,vid:pXpckHDDNYo,st:0
+  // const tl = useRef();
+  // const scroll = useScroll();
 
-  useFrame(() => {
-    tl.current.seek(scroll.offset * tl.current.duration());
-  });
+  // Executes a callback before render in a shared frame loop.
+  // Can order effects with render priority or manually render
+  // with a positive priority.
+  // useFrame(() => {
+  //   tl.current.seek(scroll.offset * tl.current.duration());
+  //   // console.log(scroll.offset);
+  // });
 
-  useLayoutEffect(() => {
-    tl.current = gsap.timeline();
+  // The signature is identical to useEffect, but it fires
+  // synchronously after all DOM mutations. Use this to read
+  // layout from the DOM and synchronously re-render.
+  // useLayoutEffect(() => {
+  //   tl.current = gsap.timeline();
 
-    // Vertical Animation
-    tl.current.to(
-      ref.current.position,
-      {
-        duration: 2,
-        y: -FLOOR_HEIGHT * (NB_FLOORS - 1),
-      },
-      0,
-    );
+  //   // Vertical Animation
+  //   tl.current.to(
+  //     ref.current.position,
+  //     {
+  //       duration: 2,
+  //       y: -FLOOR_HEIGHT * (FLOORS - 1),
+  //     },
+  //     0,
+  //   );
+  // }, []);
 
-    // Floor2 Animation
-    // tl.current.from(
-    //   floor2.current.position,
-    //   {
-    //     duration: 0.5,
-    //     x: -2,
-    //   },
-    //   0.5,
-    // );
+  console.log("Code break");
 
-    // Floor3 Animation
-    // tl.current.from(
-    //   floor3.current.position,
-    //   {
-    //     duration: 0.5,
-    //     y: 2,
-    //   },
-    //   0.5,
-    // );
-  }, []);
+  // Example 2
+  // const { camera } = useThree();
+  // const scroll = useScroll();
+
+  // // This hook runs every frame to sync scroll to camera
+  // useFrame(() => {
+  //   // scroll.offset is a value from 0 (top) to 1 (bottom)
+  //   const offset = scroll.offset;
+
+  //   // Animate camera Y (height) based on scroll
+  //   // Move from 0 to 100 height
+  //   camera.position.y = offset * 6;
+
+  //   // Add that rotation effect by shifting X and Z
+  //   camera.position.x = 20 * Math.sin(offset * 2);
+  //   camera.position.z = 20 * Math.cos(offset * 2);
+
+  //   // Essential: Keep the camera focused on the building as it moves
+  //   camera.lookAt(0, camera.position.y, 0);
+  // });
 
   return (
-    <group {...props} dispose={null} ref={ref}>
+    <group
+      {...props}
+      dispose={null}
+      ref={ref}
+      // position={[0, -viewport.height / 2 + 1, 0]}
+    >
       <mesh
         geometry={nodes.Cylinder.geometry}
         material={nodes.Cylinder.material}
       />
-
-      {/* <group position={[0, 10, 0]}>
-        <ground ref={floor3} />
-        <mesh
-          geometry={nodes.Cylinder.geometry}
-          material={nodes.Cylinder.material}
-        />
-      </group> */}
     </group>
   );
 }

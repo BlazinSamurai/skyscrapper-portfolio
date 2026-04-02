@@ -1,47 +1,47 @@
 import "./App.css";
 
-import { Canvas } from "@react-three/fiber";
-import { Leva, useControls } from "leva";
+import { useRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ScrollControls } from "@react-three/drei";
 
 import Experience from "./Experience";
 
+// function CameraManager() {
+//   const { camera } = useThree();
+
+//   // Create Leva controls
+//   const { cameraPosition } = useControls("Camera", {
+//     cameraPosition: {
+//       value: [2, 0.2, 0],
+//       step: 0.1,
+//       onChange: (v) => {
+//         camera.position.set(v[0], v[1], v[2]);
+//       },
+//     },
+//     fov: 75,
+//   });
+
+//   return null; // Component only acts as a manager
+// }
+
 function App() {
-  // HELPERS
-  const floorRotation = useControls("Rotation Floor", {
-    x: { value: 0, min: 0, max: 10, step: 0.001 },
-    y: { value: 1.56, min: 0, max: 10, step: 0.01 },
-    z: { value: 0, min: 0, max: 10, step: 0.01 },
-  });
-  const floorPosition = useControls("Floor Position", {
-    x: { value: 0.32, min: 0, max: 10, step: 0.001 },
-    y: { value: 0.1, min: 0, max: 10, step: 0.01 },
-    z: { value: 0, min: 0, max: 10, step: 0.01 },
-  });
-  const bckgndColor = useControls("Background Color", {
-    color: { value: "grey" },
-  });
+  const { cameraRef } = useRef();
 
   return (
+    // For the camera to be "animatable," it needs to
+    // have an initial position defined, and ScrollControls
+    // must wrap your Experience component.
     <Canvas
-      // style={[bckgndColor.color]}
       camera={{
-        fov: 20,
-        position: [-10, 4, 5],
+        fov: 15,
+        position: [5, 2, 15],
+        // position: [0, 0, 0], NO
       }}
     >
-      <color attach="background" args={[bckgndColor.color]} />
-      <ambientLight intensity={0.5} />
-      <Experience />
-      <mesh
-        position={[floorPosition.x, floorPosition.y, floorPosition.z]}
-        rotation={[floorRotation.x, floorRotation.y, floorRotation.z]}
-      >
-        <boxGeometry args={[5, 0, 5]} />
-        <meshStandardMaterial color="green" />
-      </mesh>
-      <axesHelper />
-      <gridHelper />
-      {/* <Leva collapsed={true} /> */}
+      {/* <CameraManager /> */}
+      <ScrollControls pages={1} damping={0.1}>
+        <Experience />
+      </ScrollControls>
     </Canvas>
   );
 }

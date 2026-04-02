@@ -19,6 +19,7 @@ function App() {
         position: [5, 2, 15],
       }}
     >
+      {/* pages: Defines the length of the scroll area, each page is height:100% */}
       <ScrollControls pages={1} damping={0.1}>
         <Experience />
       </ScrollControls>

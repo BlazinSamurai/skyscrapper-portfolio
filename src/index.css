@@ -8,3 +8,12 @@ html {
 #root {
   height: 100%;
 }
+
+canvas + div {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+canvas + div::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
